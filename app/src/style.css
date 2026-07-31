@@ -152,3 +152,53 @@ body,
   margin-top: 8px;
   border-radius: 4px;
 }
+
+/* Offline-ready toast + data-update banner */
+.toast,
+.banner {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.toast {
+  bottom: 20px;
+  background: #2e7d32;
+  color: #fff;
+}
+
+.banner-info {
+  top: 12px;
+  background: #1565c0;
+  color: #fff;
+}
+
+.banner button,
+.toast button {
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 4px;
+  background: transparent;
+  color: inherit;
+  font-size: 0.85rem;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+
+.banner button:hover,
+.toast button:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.banner-dismiss {
+  font-size: 1rem;
+  line-height: 1;
+  padding: 2px 8px;
+}
