@@ -49,8 +49,13 @@ export default defineConfig({
             // which serves 206 partial responses from the cached full
             // response. The whole archive is cached on first use and every
             // subsequent range read is satisfied from cache — online or off.
-            urlPattern: ({ url }) =>
-              PMTILES_CACHE_PATTERN.test(url.pathname) || url.href.endsWith('missouri.pmtiles'),
+            // NOTE: workbox-build serializes this function with toString(),
+            // so it must NOT close over any outer variables (like
+            // PMTILES_CACHE_PATTERN) — they are undefined inside the service
+            // worker and every handled fetch would throw. Keep it self-
+            // contained. Matches both the same-origin path and the external
+            // Release-asset URL.
+            urlPattern: ({ url }) => /missouri\.pmtiles$/.test(url.href),
             handler: 'CacheFirst',
             options: {
               cacheName: 'mo-basemap-tiles',
