@@ -1,8 +1,8 @@
 {
-  "name": "mo-dispersed-camping-app",
+  "name": "free-camping-app",
   "private": true,
   "version": "0.1.0",
-  "description": "Offline-capable map app for the Missouri dispersed camping dataset",
+  "description": "Offline-capable map app for the free dispersed camping dataset",
   "type": "module",
   "license": "MIT",
   "scripts": {

@@ -50,7 +50,7 @@ def main() -> None:
         "gpx",
         {
             "version": "1.1",
-            "creator": "mo-dispersed-camping",
+            "creator": "free-camping-map",
         },
     )
     # xmlns is set as the default namespace on the root; unprefixed child

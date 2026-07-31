@@ -32,3 +32,14 @@ Post-fix verification: `validate_data.py --strict` → 10 valid, 0 errors (photo
 Point the agent at this file plus `plans/missouri-dispersed-camping-build-plan.md`. Suggested first prompt:
 
 > Read plans/SESSION-HANDOFF.md and fix the known issues: update the 5 stale fs.usda.gov source URLs in data/sites.geojson to current working URLs, resolve the last_verified schema/docs contradiction, then re-run scripts/validate_data.py --strict, scripts/geojson_to_gpx.py, and cd app && npm test && npm run build.
+
+## Update — multi-region generalization
+
+The project has been generalized from Missouri-only to multi-region:
+
+- **Branding:** the project is now "Free Camping Map" — an open dataset + offline-capable PWA of free dispersed camping on public land, currently covering Missouri with more regions planned. Root `README.md`, `app/README.md`, and docs updated accordingly.
+- **Region registry:** `data/regions.json` is the single source of truth for basemap coverage (region id/name/bbox/pmtiles_url/size_bytes). The app's sync script copies it to `app/public/data/regions.json`; the map auto-selects the basemap whose bbox contains the viewport center. The old single `VITE_PMTILES_URL` build-time configuration is removed.
+- **Per-region opt-in downloads:** each region's PMTiles archive (~283MB) is an explicit "Download for offline use" action in the sidebar; the service worker route now matches any `.pmtiles` URL and only serves from cache for downloaded regions.
+- **Region-based validator:** `scripts/validate_data.py` now checks that every site falls inside at least one registered region's bbox from `data/regions.json`, falling back to a continental-US sanity box (with a printed note) if the file is missing or unparseable. Verified: `--strict` passes with the current 10 features (photo warnings only).
+- **Adding regions:** the manual owner workflow (extract → upload to R2 → register in `regions.json` → add sites → validate → commit) is documented in `docs/OFFLINE_TILES.md`.
+- **Go-live items are done:** the app is live at https://dalton-miller.github.io/freecamping/ with the Missouri basemap served from the Cloudflare R2 bucket.

@@ -24,7 +24,7 @@ Every site in `data/sites.geojson` is a GeoJSON `Feature` with a `Point` geometr
 
 - `geometry.type` must be `"Point"`.
 - `coordinates` must be `[longitude, latitude]` (GeoJSON order — lon first).
-- Coordinates should fall within Missouri (roughly lon −95.9 to −89.0, lat 35.9 to 40.7); the validator enforces this as a sanity check.
+- Coordinates must fall inside at least one registered region's bbox (see [`data/regions.json`](../data/regions.json); e.g. Missouri is roughly lon −95.9 to −89.0, lat 35.9 to 40.7). The validator enforces this as a sanity check.
 
 ## Example Feature
 

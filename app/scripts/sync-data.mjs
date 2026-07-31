@@ -6,12 +6,14 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const appRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const src = resolve(appRoot, '../data/sites.geojson');
-const dest = resolve(appRoot, 'public/data/sites.geojson');
 
-mkdirSync(dirname(dest), { recursive: true });
-copyFileSync(src, dest);
-console.log(`Synced ${src} -> ${dest}`);
+for (const file of ['sites.geojson', 'regions.json']) {
+  const src = resolve(appRoot, `../data/${file}`);
+  const dest = resolve(appRoot, `public/data/${file}`);
+  mkdirSync(dirname(dest), { recursive: true });
+  copyFileSync(src, dest);
+  console.log(`Synced ${src} -> ${dest}`);
+}
 
 // MapLibre GL v6 resolves its shared module relative to import.meta.url
 // (i.e. /assets/maplibre-gl-shared.mjs), which bundlers don't rewrite —

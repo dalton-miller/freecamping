@@ -11,19 +11,18 @@ import { initFilters } from './filters.js';
 import { loadSiteData, checkForDataUpdate, showUpdateBanner } from './data.js';
 
 // ---------------------------------------------------------------------------
-// Offline basemap configuration (single point of configuration).
+// Multi-region basemap configuration.
 //
-// PMTILES_URL points at the Missouri-extent Protomaps basemap extract (see
-// docs/OFFLINE_TILES.md for how it was generated). If the file is small
-// enough it ships in the repo at public/tiles/missouri.pmtiles and is served
-// relative to the app base; if it exceeds GitHub's ~100MB file limit it is
-// hosted externally (e.g. as a GitHub Release asset — the Missouri extract is
-// ~283MB, over GitHub's 100MB commit limit). In that case set the
-// VITE_PMTILES_URL env var at build time to the absolute URL; otherwise the
-// locally bundled file is used.
+// regions.json is the region registry (see /data/regions.json): each region
+// has an id, name, bbox [minLon, minLat, maxLon, maxLat], pmtiles_url, and
+// size_bytes. The app picks the basemap by viewport center: the initial
+// region is the one containing the site dataset's center (falling back to
+// the first region in the list), and the basemap switches when the viewport
+// center moves into a different region. Each region's PMTiles archive is a
+// Protomaps basemap extract (see docs/OFFLINE_TILES.md for how they are
+// generated and hosted).
 // ---------------------------------------------------------------------------
-export const PMTILES_URL =
-  import.meta.env.VITE_PMTILES_URL || `${import.meta.env.BASE_URL}tiles/missouri.pmtiles`;
+export const REGIONS_URL = `${import.meta.env.BASE_URL}data/regions.json`;
 
 // Label glyphs for the vector basemap. PMTiles files contain vector tiles but
 // not glyph PBFs, so these come from the Protomaps basemaps-assets CDN and are
@@ -37,17 +36,44 @@ const DATA_URL = `${import.meta.env.BASE_URL}data/sites.geojson`;
 const protocol = new Protocol();
 maplibregl.addProtocol('pmtiles', protocol.tile);
 
+// Fetch the region registry. On failure (offline before first precache,
+// missing file) fall back to an empty list — the map then uses the raster
+// fallback style.
+async function loadRegions() {
+  try {
+    const res = await fetch(REGIONS_URL);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const json = await res.json();
+    return Array.isArray(json.regions) ? json.regions : [];
+  } catch (err) {
+    console.warn(`Region registry not available at ${REGIONS_URL} (${err.message}).`);
+    return [];
+  }
+}
+
+// First region whose bbox contains the point, else null.
+// lngLat is anything with .lng/.lat (e.g. maplibregl.LngLat).
+export function regionForCenter(regions, lngLat) {
+  for (const region of regions) {
+    const [minLon, minLat, maxLon, maxLat] = region.bbox;
+    if (lngLat.lng >= minLon && lngLat.lng <= maxLon && lngLat.lat >= minLat && lngLat.lat <= maxLat) {
+      return region;
+    }
+  }
+  return null;
+}
+
 // Minimal handwritten style over the Protomaps basemap tile schema (v4):
 // land ("earth") fill, water fill, road lines, place labels. Readability is
-// the bar, not polish.
-function offlineVectorStyle() {
+// the bar, not polish. Takes the region's PMTiles URL.
+function offlineVectorStyle(pmtilesUrl) {
   return {
     version: 8,
     glyphs: GLYPHS_URL,
     sources: {
       protomaps: {
         type: 'vector',
-        url: `pmtiles://${PMTILES_URL}`,
+        url: `pmtiles://${pmtilesUrl}`,
         attribution:
           '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://protomaps.com">Protomaps</a>',
       },
@@ -103,9 +129,9 @@ function offlineVectorStyle() {
   };
 }
 
-// Fallback online basemap (OSM raster tiles) used only when the PMTiles
-// archive isn't reachable — e.g. during local dev before the tile extract has
-// been generated. The shipped/offline app always has the archive available.
+// Fallback online basemap (OSM raster tiles) used only when the region's
+// PMTiles archive isn't reachable — e.g. during local dev before the tile
+// extract has been generated.
 const RASTER_FALLBACK_STYLE = {
   version: 8,
   sources: {
@@ -122,16 +148,16 @@ const RASTER_FALLBACK_STYLE = {
   ],
 };
 
-async function resolveBasemapStyle() {
+async function resolveBasemapStyle(region) {
   try {
     // A 1-byte range request mirrors how the pmtiles library reads the
     // archive, so this is a faithful availability probe.
-    const res = await fetch(PMTILES_URL, { headers: { Range: 'bytes=0-0' } });
-    if (res.ok || res.status === 206) return offlineVectorStyle();
+    const res = await fetch(region.pmtiles_url, { headers: { Range: 'bytes=0-0' } });
+    if (res.ok || res.status === 206) return offlineVectorStyle(region.pmtiles_url);
     throw new Error(`HTTP ${res.status}`);
   } catch (err) {
     console.warn(
-      `PMTiles basemap not available at ${PMTILES_URL} (${err.message}). ` +
+      `PMTiles basemap not available at ${region.pmtiles_url} (${err.message}). ` +
         'Falling back to online OSM raster tiles. See docs/OFFLINE_TILES.md.',
     );
     return RASTER_FALLBACK_STYLE;
@@ -150,59 +176,127 @@ const LAND_MANAGER_COLORS = [
   '#6d4c41', // brown fallback for "Other"/unknown
 ];
 
+// Center of the site dataset's bounding box, or null if there are no points.
+function dataCenter(data) {
+  const features = data.features || [];
+  if (features.length === 0) return null;
+
+  const bounds = new maplibregl.LngLatBounds();
+  for (const f of features) {
+    if (f.geometry?.type === 'Point') {
+      bounds.extend(f.geometry.coordinates);
+    }
+  }
+  return bounds.isEmpty() ? null : bounds.getCenter();
+}
+
+// (Re)add the sites source, marker layer, and popup handlers. Called on
+// initial load and after every basemap style switch (setStyle drops all
+// runtime sources/layers).
+function addSitesLayer(map, siteData) {
+  map.addSource('sites', {
+    type: 'geojson',
+    data: siteData,
+  });
+
+  map.addLayer({
+    id: 'site-markers',
+    type: 'circle',
+    source: 'sites',
+    paint: {
+      'circle-radius': 8,
+      'circle-color': LAND_MANAGER_COLORS,
+      'circle-stroke-width': 2,
+      'circle-stroke-color': '#ffffff',
+    },
+  });
+
+  addPopupHandlers(map);
+}
+
+// Switch the basemap to a different region's PMTiles archive (or the raster
+// fallback if it isn't reachable), then restore the site markers once the
+// new style has loaded. `generation` guards against concurrent switches: if
+// a newer switch started while we were awaiting the availability probe,
+// abandon this one entirely (its style.load re-add would collide with the
+// newer one and/or overwrite the newer basemap).
+async function switchBasemap(map, region, getData, generation, isCurrent) {
+  const style = await resolveBasemapStyle(region);
+  if (!isCurrent(generation)) return;
+  // Register before setStyle so the listener can't miss the event.
+  map.once('style.load', () => {
+    if (isCurrent(generation)) addSitesLayer(map, getData());
+  });
+  map.setStyle(style);
+}
+
 export async function initMap() {
-  const style = await resolveBasemapStyle();
+  // Fetch the region registry and render from the best cached copy of the
+  // site data (offline-first) in parallel; then check for a newer dataset
+  // in the background.
+  const [regions, { data: siteData, text }] = await Promise.all([
+    loadRegions(),
+    loadSiteData(DATA_URL),
+  ]);
+  checkForDataUpdate(DATA_URL, text, showUpdateBanner);
+
+  // Initial region: the one containing the dataset's center, else the first
+  // region in the list, else none (raster fallback).
+  const center = dataCenter(siteData);
+  const initialRegion = (center && regionForCenter(regions, center)) || regions[0] || null;
+  const style = initialRegion
+    ? await resolveBasemapStyle(initialRegion)
+    : RASTER_FALLBACK_STYLE;
 
   const map = new maplibregl.Map({
     container: 'map',
     style,
-    center: [-92.5, 38.5], // Missouri
-    zoom: 6,
+    center: center ? [center.lng, center.lat] : [-98.5, 39.5], // fallback: contiguous US
+    zoom: 4,
   });
 
   map.addControl(new maplibregl.NavigationControl(), 'top-right');
 
   // Capture the 'load' event as a promise BEFORE doing any async work — the
   // style (especially the tiny raster fallback) can finish loading while
-  // we're still awaiting the site data, and a listener registered after the
+  // we're still awaiting other work, and a listener registered after the
   // event has fired never runs (no markers, stuck loading overlay).
   const mapLoaded = new Promise((resolve) => {
     if (map.loaded()) resolve();
     else map.once('load', resolve);
   });
 
-  // Render immediately from the best cached copy (offline-first), then check
-  // for a newer dataset in the background.
-  const { data: siteData, text } = await loadSiteData(DATA_URL);
-  checkForDataUpdate(DATA_URL, text, showUpdateBanner);
+  // State for basemap switching (declared before the filter wiring below —
+  // initFilters may invoke its callback immediately). latestSitesData
+  // carries the active filter selection so markers stay filtered after a
+  // switch; switchGeneration abandons superseded concurrent switches.
+  let currentPmtilesUrl = initialRegion?.pmtiles_url ?? null;
+  let latestSitesData = siteData;
+  let switchGeneration = 0;
+  const isCurrent = (g) => g === switchGeneration;
 
   await mapLoaded;
   {
-    map.addSource('sites', {
-      type: 'geojson',
-      data: siteData,
-    });
-
-    map.addLayer({
-      id: 'site-markers',
-      type: 'circle',
-      source: 'sites',
-      paint: {
-        'circle-radius': 8,
-        'circle-color': LAND_MANAGER_COLORS,
-        'circle-stroke-width': 2,
-        'circle-stroke-color': '#ffffff',
-      },
-    });
-
-    addPopupHandlers(map);
+    addSitesLayer(map, siteData);
     fitToData(map, siteData);
     initFilters(siteData, (filtered) => {
-      map.getSource('sites').setData(filtered);
+      latestSitesData = filtered; // remember active filters across basemap switches
+      // The source is briefly absent during a basemap style switch.
+      map.getSource('sites')?.setData(filtered);
     });
 
     hideLoading();
   }
+
+  // Switch the basemap when the viewport center moves into a different
+  // region served by a different PMTiles archive.
+  map.on('moveend', () => {
+    const region = regionForCenter(regions, map.getCenter());
+    if (region && region.pmtiles_url !== currentPmtilesUrl) {
+      currentPmtilesUrl = region.pmtiles_url;
+      switchBasemap(map, region, () => latestSitesData, ++switchGeneration, isCurrent);
+    }
+  });
 }
 
 // Dismiss the full-screen loading overlay once the map style and site data
@@ -227,7 +321,15 @@ function fitToData(map, data) {
   map.fitBounds(bounds, { padding: 60, maxZoom: 12 });
 }
 
+// Map-level event handlers survive map.setStyle(), so register them only
+// once per map even though addSitesLayer runs again after every basemap
+// switch (re-registering would stack duplicate click handlers/popups).
+const popupHandlerMaps = new WeakSet();
+
 function addPopupHandlers(map) {
+  if (popupHandlerMaps.has(map)) return;
+  popupHandlerMaps.add(map);
+
   map.on('click', 'site-markers', (e) => {
     const feature = e.features?.[0];
     if (!feature) return;

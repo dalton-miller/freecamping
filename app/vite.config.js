@@ -13,10 +13,10 @@ export default defineConfig({
       filename: 'sw.js',
       registerType: 'autoUpdate',
       manifest: {
-        name: 'MO Dispersed Camping',
-        short_name: 'MO Camping',
+        name: 'Free Camping Map',
+        short_name: 'Camping',
         description:
-          'Offline-capable map of free dispersed camping locations on Missouri public land.',
+          'Offline-capable map of free dispersed camping locations on public land.',
         theme_color: '#2e7d32',
         background_color: '#ffffff',
         display: 'standalone',
@@ -31,12 +31,13 @@ export default defineConfig({
           },
         ],
       },
-      // Precache the app shell (built JS/CSS/HTML), icons, and the site
-      // dataset. The .pmtiles basemap is deliberately NOT precached — users
-      // opt in to the ~283MB offline download (see src/sw.js and
-      // src/offline.js).
+      // Precache the app shell (built JS/CSS/HTML), icons, the site
+      // dataset, and the region registry (regions.json — tiny, and required
+      // to pick the offline basemap when booting offline). The .pmtiles
+      // basemaps are deliberately NOT precached — users opt in to the large
+      // per-region offline downloads (see src/sw.js and src/offline.js).
       injectManifest: {
-        globPatterns: ['**/*.{js,mjs,css,html,png,ico,svg,geojson}'],
+        globPatterns: ['**/*.{js,mjs,css,html,png,ico,svg,geojson,json}'],
       },
     }),
   ],

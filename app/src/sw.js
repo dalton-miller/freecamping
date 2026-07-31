@@ -4,7 +4,7 @@
 // - App shell + dataset: precached (self.__WB_MANIFEST is replaced at build
 //   time with the precache list, per injectManifest.globPatterns).
 // - Basemap glyphs: CacheFirst, cached on first online load.
-// - PMTiles basemap (~283MB): OPT-IN ONLY. This worker never downloads or
+// - PMTiles basemaps (~283MB each): OPT-IN ONLY. This worker never downloads or
 //   caches it automatically. The app puts a full copy into the
 //   'mo-basemap-tiles' cache only when the user explicitly downloads it
 //   (src/offline.js). Here we serve range requests from that cache when it
@@ -46,14 +46,14 @@ registerRoute(
   }),
 );
 
-// PMTiles basemap: cache-aware passthrough. The pmtiles JS library reads the
-// archive with HTTP Range requests. If the user has downloaded the archive
-// for offline use, serve those ranges from the cached full response (206
-// partials via createPartialResponse). If not, fetch from the network and
-// DO NOT cache — the ~283MB file only enters the cache via the explicit
-// opt-in download in src/offline.js.
+// PMTiles basemaps (one per region): cache-aware passthrough. The pmtiles
+// JS library reads the archive with HTTP Range requests. If the user has
+// downloaded the archive for offline use, serve those ranges from the
+// cached full response (206 partials via createPartialResponse). If not,
+// fetch from the network and DO NOT cache — these huge files only enter the
+// cache via the explicit opt-in downloads in src/offline.js.
 registerRoute(
-  ({ url }) => url.href.endsWith('missouri.pmtiles'),
+  ({ url }) => url.href.endsWith('.pmtiles'),
   async ({ request }) => {
     const cache = await caches.open(BASEMAP_CACHE);
     // Range headers don't participate in cache matching; Vary: Origin (from

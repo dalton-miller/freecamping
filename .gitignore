@@ -2,6 +2,6 @@ node_modules/
 dist/
 .pi-subagents/
 
-# Offline basemap archive (~283MB) — hosted as a GitHub Release asset, not
-# committed to the repo. See docs/OFFLINE_TILES.md.
+# Local copies of offline basemap archives (~283MB each) — hosted on
+# Cloudflare R2, not committed to the repo. See docs/OFFLINE_TILES.md.
 app/public/tiles/*.pmtiles

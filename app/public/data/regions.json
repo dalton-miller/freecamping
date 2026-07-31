@@ -1,0 +1,12 @@
+{
+  "$comment": "Registry of basemap regions. Each region is a PMTiles extract (see docs/OFFLINE_TILES.md). To add a region: extract the pmtiles file for its bbox, upload it to the hosting bucket, and add an entry here. bbox is [minLon, minLat, maxLon, maxLat]; the app picks the basemap by viewport center and validate_data.py checks that every campsite falls inside at least one region's bbox. size_bytes is used for the offline-download button label (Content-Length of the hosted file).",
+  "regions": [
+    {
+      "id": "missouri",
+      "name": "Missouri",
+      "bbox": [-95.9, 35.9, -89.0, 40.7],
+      "pmtiles_url": "https://pub-5df54feec81641f48132b421f8132620.r2.dev/pmtiles/missouri.pmtiles",
+      "size_bytes": 283532408
+    }
+  ]
+}

@@ -1,6 +1,6 @@
-# MO Dispersed Camping — App
+# Free Camping Map — App
 
-Offline-capable map app for browsing the Missouri dispersed camping dataset
+Offline-capable map app for browsing the free dispersed camping dataset
 ([`../data/sites.geojson`](../data/sites.geojson)). Built with Vite, vanilla
 JavaScript, and [MapLibre GL JS](https://maplibre.org/).
 
@@ -16,9 +16,9 @@ npm install
 npm run dev
 ```
 
-This first copies the canonical dataset from `../data/sites.geojson` into
-`public/data/sites.geojson` (see "Syncing data" below), then starts the Vite
-dev server.
+This first copies the canonical dataset from `../data/sites.geojson` and the
+region registry from `../data/regions.json` into `public/data/` (see "Syncing
+data" below), then starts the Vite dev server.
 
 ## Build
 
@@ -30,34 +30,43 @@ Outputs a static site to `dist/`. Preview it locally with `npm run preview`.
 
 ## Offline basemap tiles
 
-The basemap is a Missouri-extent PMTiles archive (`public/tiles/missouri.pmtiles`,
-~283MB) that is **not committed to git** — it's too large for GitHub. See
-[`../docs/OFFLINE_TILES.md`](../docs/OFFLINE_TILES.md) for how to regenerate it
-with the `pmtiles` CLI and how it's hosted (GitHub Release asset). For local
-dev, drop the file into `public/tiles/`; if it's missing, the app warns and
-falls back to online OSM raster tiles. For deployed builds, point the app at
-the hosted file with the `VITE_PMTILES_URL` build-time env var.
+Basemap coverage is organized by **region**. The registry of regions lives in
+[`../data/regions.json`](../data/regions.json) (synced to
+`public/data/regions.json`); each entry points at a hosted PMTiles archive
+(~283MB for Missouri) that is **not committed to git** — it's too large for
+GitHub. The archives are hosted on a Cloudflare R2 bucket; see
+[`../docs/OFFLINE_TILES.md`](../docs/OFFLINE_TILES.md) for how to extract a
+region with the `pmtiles` CLI, how it's hosted, and how to add a new region.
+
+At runtime the app fetches `data/regions.json`, **auto-selects the basemap
+whose bbox contains the current viewport center**, and lists each region in
+the sidebar as a per-region **opt-in offline download**. If an archive is
+unreachable (e.g. fresh dev checkout), the app warns and falls back to online
+OSM raster tiles. There is no build-time tiles URL configuration —
+`regions.json` is the single source of truth.
 
 ## PWA / offline support
 
 The app is an installable PWA (configured via `vite-plugin-pwa` in
 `vite.config.js`). The service worker:
 
-- **Precaches** the app shell (built JS/CSS/HTML), icons, and
-  `data/sites.geojson`.
-- **Runtime-caches** `missouri.pmtiles` with a `CacheFirst` strategy plus
-  Workbox's `rangeRequests` plugin. The pmtiles library reads the archive via
-  HTTP Range requests rather than one big download, so precaching it
-  wholesale would be wrong (multi-hundred-MB upfront download, and precache
-  doesn't honor Range requests); the runtime strategy caches the archive on
-  first use and serves later 206 partial responses from cache.
+- **Precaches** the app shell (built JS/CSS/HTML), icons,
+  `data/sites.geojson`, and `data/regions.json`.
+- **Serves `.pmtiles` archives from cache only when the user opted in.** A
+  route matching any `.pmtiles` URL answers Range requests from Cache Storage
+  if (and only if) the user previously clicked "Download for offline use" for
+  that region in the sidebar (Workbox `createPartialResponse` turns the
+  cached full response into 206 partials). Otherwise requests pass straight
+  through to the network without caching — the multi-hundred-MB archives are
+  never cached silently.
 - **Runtime-caches** label glyphs from the Protomaps basemaps-assets CDN
   (CacheFirst) so place labels render offline after the first online load.
 
 Once the service worker finishes precaching, a dismissible "Ready for offline
-use" toast appears. After that point the app — map, base tiles, markers,
-popups, filters — works with no network connection. Note the first-ever load
-must be online (the basemap archive and glyphs are cached on first use).
+use" toast appears. After that point the app shell, markers, popups, and
+filters work with no network connection; the basemap works offline for any
+region the user explicitly downloaded. Note the first-ever load must be
+online (glyphs are cached on first use).
 
 Icons in `public/icons/` are generated placeholders; regenerate with
 `npm run gen-icons`.
@@ -106,48 +115,44 @@ Key configuration:
 - **Vite `base`** is set to `/freecamping/` in `vite.config.js` so
   asset URLs resolve under the Pages subpath. Override with the
   `VITE_BASE_PATH` env var if hosting at a domain root instead.
-- **`VITE_PMTILES_URL`** is set in the workflow to the externally hosted
-  `missouri.pmtiles` Release-asset URL — the ~283MB archive is not in the
-  repo, so a deployed build must point at the hosted copy (see
-  [`../docs/OFFLINE_TILES.md`](../docs/OFFLINE_TILES.md)).
+- **Basemap URLs come from `data/regions.json`** (synced into the build as
+  `public/data/regions.json`) — there is no build-time `VITE_PMTILES_URL`
+  env var anymore. The ~283MB-per-region archives are not in the repo; they
+  are served from the R2 bucket, and `regions.json` is the single source of
+  truth (see [`../docs/OFFLINE_TILES.md`](../docs/OFFLINE_TILES.md)).
 
-### Remaining manual steps to go live
+### Initial go-live (completed)
 
-The workflow is ready but deployment itself requires pushing to GitHub:
-
-1. Push this repo to GitHub as `freecamping`.
-2. Upload `public/tiles/missouri.pmtiles` as a Release asset (tag
-   `tiles-v1`) per [`../docs/OFFLINE_TILES.md`](../docs/OFFLINE_TILES.md).
-3. Edit `deploy.yml`: replace `<owner>` in `VITE_PMTILES_URL` with the
-   GitHub user/org.
-4. In repo Settings → Pages, set Source to **GitHub Actions**.
-5. Push to `main` (or run the workflow manually) to deploy.
-6. Replace `<owner>` in the live-URL link at the top of the root
-   [`../README.md`](../README.md) with the real URL.
+The app is live at https://dalton-miller.github.io/freecamping/ with the
+Missouri basemap served from the R2 bucket. The original go-live steps were:
+push the repo to GitHub as `freecamping`, upload `missouri.pmtiles` to R2 and
+register it in `data/regions.json`, enable GitHub Pages (GitHub Actions
+source), deploy, and verify against the live URL.
 
 ### Verifying the deployed app
 
-After the first successful deploy, verify against the **live URL** (not
-localhost):
+Verify against the **live URL** (not localhost):
 
 1. Visit `https://dalton-miller.github.io/freecamping/` in a fresh
    browser profile. Confirm the map renders with the vector basemap, site
    markers appear, and clicking a marker shows the popup.
 2. Exercise the sidebar: search by name, toggle land-manager / access /
    amenity checkboxes, and hit Reset — markers should update live.
-3. Wait for the "Ready for offline use" toast (the basemap archive caches
-   on first use, so pan/zoom around Missouri once).
+3. Wait for the "Ready for offline use" toast, then use a region's
+   "Download for offline use" button in the sidebar to cache its basemap.
 4. Test offline mode: in Chrome DevTools → Network, set throttling to
-   **Offline**, then reload the page. The map, base tiles, markers, popups,
-   and filters should all still work with no successful network requests
-   beyond the service worker cache.
+   **Offline**, then reload the page. The app shell, markers, popups, and
+   filters should all still work, and the basemap should render for the
+   downloaded region with no successful network requests beyond the service
+   worker cache.
 5. Confirm the app is installable (browser "Install app" prompt / Add to
    Home Screen on mobile) and launches standalone.
 
 ## Syncing data
 
-The app reads its site data from `public/data/sites.geojson`. That file is a
-**copy** of the canonical dataset at the repo root (`data/sites.geojson`),
+The app reads its site data from `public/data/sites.geojson` and its region
+registry from `public/data/regions.json`. Those files are **copies** of the
+canonical data at the repo root (`data/sites.geojson`, `data/regions.json`),
 kept in sync by:
 
 ```sh
@@ -156,15 +161,19 @@ npm run sync-data
 
 `sync-data` runs automatically before `npm run dev` and `npm run build` (via
 npm `pre` hooks), so you normally don't need to run it by hand. If you edit
-the root dataset, re-run dev/build (or `npm run sync-data`) to pick up the
-changes. The copied file under `public/` should not be edited directly.
+the root dataset or region registry, re-run dev/build (or
+`npm run sync-data`) to pick up the changes. The copied files under
+`public/` should not be edited directly.
 
 ## Features
 
-- Offline-first basemap: Missouri PMTiles vector tiles (see "Offline
-  basemap tiles"), with a graceful fallback to online OSM raster tiles when
-  the archive isn't present (e.g. fresh dev checkout).
-- Installable PWA with full offline support after first load, including a
+- Offline-first basemaps: per-region PMTiles vector tiles registered in
+  `data/regions.json`, auto-selected by viewport center, with a graceful
+  fallback to online OSM raster tiles when an archive isn't present (e.g.
+  fresh dev checkout). See "Offline basemap tiles".
+- Per-region opt-in offline basemap downloads in the sidebar, so the
+  multi-hundred-MB archives are never cached silently.
+- Installable PWA with offline support after first load, including a
   "Ready for offline use" indicator and a "New data available — refresh to
   update" prompt (see "Updating data offline-first").
 - Every site in the dataset rendered as a circle marker, colored by land

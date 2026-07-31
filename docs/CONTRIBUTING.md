@@ -1,10 +1,10 @@
 # Contributing
 
-Thanks for helping grow the Missouri dispersed camping dataset! This guide covers how to add or correct sites, photos, and what we expect around accuracy.
+Thanks for helping grow the free dispersed camping dataset! The dataset covers free dispersed camping on public land (currently Missouri, with more regions planned). This guide covers how to add or correct sites, photos, and what we expect around accuracy.
 
 ## Adding a new site
 
-1. Edit `data/sites.geojson` directly — each site is a GeoJSON `Feature` with a `Point` geometry (`[longitude, latitude]` order) and a `properties` object following `data/schema.json`. See [`docs/DATA_SCHEMA.md`](DATA_SCHEMA.md) for a full field-by-field reference with examples.
+1. Edit `data/sites.geojson` directly — each site is a GeoJSON `Feature` with a `Point` geometry (`[longitude, latitude]` order) and a `properties` object following `data/schema.json`. See [`docs/DATA_SCHEMA.md`](DATA_SCHEMA.md) for a full field-by-field reference with examples. Every site must fall inside at least one registered region's bbox (see `data/regions.json`); to add a site in a new area, a region must be registered first — see [`docs/OFFLINE_TILES.md`](OFFLINE_TILES.md) for how regions are added.
 2. Give the site a stable, unique, lowercase-hyphenated `id` slug (e.g. `cedar-creek-pull-off`). Never reuse an id for a different site.
 3. Keep `photos` as an empty array unless you're also contributing photos (see below).
 

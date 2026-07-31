@@ -3,9 +3,8 @@
 #
 # One-time setup required in the GitHub repo before this works:
 #   1. Settings → Pages → Source: "GitHub Actions".
-#   2. Upload the offline basemap as a Release asset (it's ~283MB, far over
-#      the 100MB git file limit — see docs/OFFLINE_TILES.md) and set
-#      VITE_PMTILES_URL below to that asset's download URL.
+#   2. Basemap regions come from data/regions.json (PMTiles hosted on
+#      Cloudflare R2 — see docs/OFFLINE_TILES.md). No env setup needed here.
 name: Deploy to GitHub Pages
 
 on:
@@ -24,12 +23,6 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      # The Missouri PMTiles basemap is hosted as a GitHub Release asset, not
-      # committed to the repo. Hosted on Cloudflare R2 (GitHub Release assets
-      # send no CORS headers, so browsers block cross-origin range requests).
-      # See docs/OFFLINE_TILES.md.
-      VITE_PMTILES_URL: https://pub-5df54feec81641f48132b421f8132620.r2.dev/pmtiles/missouri.pmtiles
     steps:
       - uses: actions/checkout@v4
 
