@@ -23,6 +23,7 @@ The PR should show **zero errors** (warnings about missing photos are fine). If 
 
 - **Don't guess coordinates from memory.** Drop a pin on a map (USGS topo, CalTopo, Google Maps satellite, the MVUM) and use those coordinates.
 - **Cite a source** in the `source` field: an agency page URL, a forum thread link, or "personal visit, YYYY-MM". If it's community-reported and unverified, say so (e.g. "overlandbound.com forum thread, unverified").
+- **Use the agency's canonical name for `land_manager`** (e.g. "Mark Twain National Forest", "Bureau of Land Management") — it's a free string, and the app's filter checkboxes are built from the exact values in the data, so inconsistent spellings create duplicate filter options.
 - **Always set `last_verified` to the date you last reviewed the entry against its source.** It records when the entry was last reviewed, not a guarantee of on-the-ground accuracy. If you're not fully confident in a location, say so explicitly in `notes` rather than omitting the caveat — honest uncertainty is more useful than false precision.
 
 ## Leave No Trace / responsible sharing

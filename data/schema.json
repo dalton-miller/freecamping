@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "MO Dispersed Camping Site Properties",
-  "description": "Schema for the 'properties' object of a GeoJSON Feature representing one dispersed camping site on Missouri public land.",
+  "title": "Free Camping Site Properties",
+  "description": "Schema for the 'properties' object of a GeoJSON Feature representing one dispersed camping site on public land.",
   "type": "object",
   "required": ["id", "name", "land_manager", "access", "last_verified"],
   "additionalProperties": false,
@@ -20,8 +20,8 @@
     },
     "land_manager": {
       "type": "string",
-      "description": "Agency that manages the land.",
-      "enum": ["Mark Twain National Forest", "Missouri Department of Conservation", "Other"]
+      "description": "Agency that manages the land (free string — e.g. a National Forest, state conservation agency, BLM field office). Use the agency's canonical name so filter checkboxes group correctly; existing values include \"Mark Twain National Forest\" and \"Missouri Department of Conservation\".",
+      "minLength": 1
     },
     "access": {
       "type": "string",

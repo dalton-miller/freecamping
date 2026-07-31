@@ -8,7 +8,7 @@ Every site in `data/sites.geojson` is a GeoJSON `Feature` with a `Point` geometr
 |------|------|----------|-------------|---------|
 | `id` | string | Yes | Stable unique slug (lowercase, hyphenated). Never reuse an id for a different site. | `"noblett-lake-below-dam"` |
 | `name` | string | Yes | Human-readable site name. | `"Noblett Lake Dispersed Site"` |
-| `land_manager` | string (enum) | Yes | Managing agency. One of `"Mark Twain National Forest"`, `"Missouri Department of Conservation"`, `"Other"`. | `"Mark Twain National Forest"` |
+| `land_manager` | string | Yes | Managing agency (free string). Use the agency's canonical name so filter checkboxes group correctly. | `"Mark Twain National Forest"` |
 | `access` | string (enum) | Yes | Road/vehicle access character. One of `"paved"`, `"gravel"`, `"high_clearance_recommended"`, `"4wd_recommended"`. | `"paved"` |
 | `last_verified` | string (ISO 8601 date) | Yes | Date the entry was last reviewed against its source. Records review, not confirmed accuracy — flag location uncertainty in `notes`/`source`. | `"2024-06-15"` |
 | `description` | string | No | Free-text description of the site. | `"Gravel pull-offs along the road below the dam."` |
