@@ -6,7 +6,7 @@ export function initPwa() {
   registerSW({
     immediate: true,
     onOfflineReady() {
-      showToast('Ready for offline use');
+      showToast('App cached — download the basemap (Filters → Offline basemap) for full offline use');
     },
   });
 }

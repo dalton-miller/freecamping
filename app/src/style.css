@@ -368,3 +368,34 @@ body,
   line-height: 1;
   padding: 2px 8px;
 }
+
+/* Offline basemap controls */
+#offline-section {
+  margin-top: 1rem;
+  border-top: 1px solid #ddd;
+  padding-top: 0.75rem;
+}
+.offline-note {
+  font-size: 0.85rem;
+  color: #555;
+  margin: 0 0 0.5rem;
+}
+.offline-ok { color: #2e7d32; }
+.offline-error { color: #b71c1c; }
+#offline-controls button {
+  display: block;
+  width: 100%;
+  margin-top: 0.25rem;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid #2e7d32;
+  border-radius: 4px;
+  background: #fff;
+  color: #2e7d32;
+  cursor: pointer;
+}
+#offline-controls button:hover { background: #e8f5e9; }
+#offline-controls progress {
+  width: 100%;
+  height: 0.75rem;
+  margin-bottom: 0.5rem;
+}

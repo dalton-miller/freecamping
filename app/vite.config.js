@@ -1,11 +1,6 @@
 import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
-// Matches the PMTILES_URL constant in src/map.js — keep both in sync. The
-// basemap may be served locally (/tiles/missouri.pmtiles) or from an external
-// host, so the runtime cache pattern matches the filename anywhere.
-const PMTILES_CACHE_PATTERN = /missouri\.pmtiles$/;
-
 export default defineConfig({
   // GitHub Pages hosts the site under /<repo-name>/ rather than the domain
   // root, so all built asset URLs need this prefix. VITE_BASE_PATH allows an
@@ -13,6 +8,9 @@ export default defineConfig({
   base: process.env.VITE_BASE_PATH || '/freecamping/',
   plugins: [
     VitePWA({
+      strategies: 'injectManifest',
+      srcDir: 'src',
+      filename: 'sw.js',
       registerType: 'autoUpdate',
       manifest: {
         name: 'MO Dispersed Camping',
@@ -33,54 +31,12 @@ export default defineConfig({
           },
         ],
       },
-      workbox: {
-        // Precache the app shell (built JS/CSS/HTML), icons, and the site
-        // dataset. Note: the .pmtiles basemap is deliberately NOT in
-        // globPatterns — see the runtimeCaching entry below.
+      // Precache the app shell (built JS/CSS/HTML), icons, and the site
+      // dataset. The .pmtiles basemap is deliberately NOT precached — users
+      // opt in to the ~283MB offline download (see src/sw.js and
+      // src/offline.js).
+      injectManifest: {
         globPatterns: ['**/*.{js,css,html,png,ico,svg,geojson}'],
-        runtimeCaching: [
-          {
-            // The pmtiles JS library reads the archive with HTTP Range
-            // requests (fetching small byte ranges on demand) rather than
-            // downloading the whole file. Precaching it wholesale would force
-            // a full multi-hundred-MB download on first install and Workbox
-            // precaching does not honor Range requests. Instead we use a
-            // runtime CacheFirst strategy with the rangeRequests plugin,
-            // which serves 206 partial responses from the cached full
-            // response. The whole archive is cached on first use and every
-            // subsequent range read is satisfied from cache — online or off.
-            // NOTE: workbox-build serializes this function with toString(),
-            // so it must NOT close over any outer variables (like
-            // PMTILES_CACHE_PATTERN) — they are undefined inside the service
-            // worker and every handled fetch would throw. Keep it self-
-            // contained. Matches both the same-origin path and the external
-            // Release-asset URL.
-            urlPattern: ({ url }) => /missouri\.pmtiles$/.test(url.href),
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'mo-basemap-tiles',
-              rangeRequests: true,
-              cacheableResponse: { statuses: [0, 200, 206] },
-              expiration: {
-                maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year — basemap changes rarely
-              },
-            },
-          },
-          {
-            // Label glyphs for the vector basemap (PMTiles archives don't
-            // contain glyph PBFs). Cached on first online load so labels keep
-            // rendering offline afterwards.
-            urlPattern: /^https:\/\/protomaps\.github\.io\/basemaps-assets\//,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'mo-basemap-glyphs',
-              cacheableResponse: { statuses: [0, 200] },
-              expiration: {
-                maxAgeSeconds: 60 * 60 * 24 * 365,
-              },
-            },
-          },
-        ],
       },
     }),
   ],

@@ -56,16 +56,23 @@ committed** (`app/public/tiles/*.pmtiles` is gitignored). Options:
 
 - **Git LFS** — works, but LFS bandwidth/storage quotas on the free tier are
   small and every clone pays the cost.
-- **GitHub Release asset (chosen)** — release assets may be up to 2GB each
-  and don't bloat the repo. Upload with:
+- **GitHub Release asset** — release assets may be up to 2GB each and don't
+  bloat the repo. Upload with:
 
   ```sh
   gh release create tiles-v1 app/public/tiles/missouri.pmtiles \
     --title "Offline basemap tiles" --notes "Missouri z0-14 Protomaps extract"
   ```
 
-  The asset is then available at a stable URL like
-  `https://github.com/<owner>/mo-dispersed-camping/releases/download/tiles-v1/missouri.pmtiles`.
+  ⚠️ Release assets are served from `release-assets.githubusercontent.com`,
+  which sends **no CORS headers** — browsers block cross-origin range
+  requests, so this URL cannot be used directly by the app. (A `tiles-v1`
+  asset exists in this repo as a backup copy only.)
+- **Cloudflare R2 (chosen)** — the archive is hosted at
+  `https://pub-5df54feec81641f48132b421f8132620.r2.dev/pmtiles/missouri.pmtiles`
+  (public `r2.dev` bucket URL, free tier). Range requests work natively; a
+  bucket CORS policy allows `GET`/`HEAD` with the `Range` header from
+  `https://dalton-miller.github.io` and exposes `Content-Range`/`Accept-Ranges`.
 
 ## How the app consumes it
 
@@ -86,13 +93,21 @@ If the archive is unreachable (e.g. dev before generating tiles), the app
 logs a warning and falls back to online OSM raster tiles so development can
 continue.
 
-## Offline caching behavior
+## Offline caching behavior — opt-in download
 
-The pmtiles JS library reads the archive with HTTP Range requests instead of
-downloading it whole. The service worker therefore does **not** precache the
-file; it uses a Workbox runtime `CacheFirst` strategy with the
-`rangeRequests` plugin (see `app/vite.config.js`), which caches the full
-response on first use and serves subsequent 206 partial responses from that
-cache — online or offline. Label glyphs (not stored in PMTiles archives) are
-fetched from the Protomaps basemaps-assets CDN and runtime-cached the same
-way, so labels keep working offline after the first online load.
+At ~283MB the basemap is far too big to cache silently, so offline use is
+**opt-in**: the user clicks "Download for offline use" in the sidebar
+(`app/src/offline.js`), which fetches the full archive (with progress and
+cancel) and writes it to the `mo-basemap-tiles` Cache Storage bucket.
+
+The service worker (`app/src/sw.js`, Workbox injectManifest) never caches the
+archive on its own. Its route for `missouri.pmtiles` serves Range requests
+from the cache **only if the user downloaded it** (Workbox
+`createPartialResponse` turns the cached full response into 206 partials),
+and otherwise passes straight through to the network without caching. Casual
+visitors therefore never pull the big file; tiles stream on demand over the
+network while online.
+
+Label glyphs (not stored in PMTiles archives) are fetched from the Protomaps
+basemaps-assets CDN and runtime-cached CacheFirst, so labels keep working
+offline after the first online load.

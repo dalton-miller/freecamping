@@ -16,7 +16,7 @@ import { loadSiteData, checkForDataUpdate, showUpdateBanner } from './data.js';
 // VITE_PMTILES_URL env var at build time to the absolute URL; otherwise the
 // locally bundled file is used.
 // ---------------------------------------------------------------------------
-const PMTILES_URL =
+export const PMTILES_URL =
   import.meta.env.VITE_PMTILES_URL || `${import.meta.env.BASE_URL}tiles/missouri.pmtiles`;
 
 // Label glyphs for the vector basemap. PMTiles files contain vector tiles but
