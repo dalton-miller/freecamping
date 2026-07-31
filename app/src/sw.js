@@ -12,6 +12,7 @@
 //   caching — so casual visitors never pull the big file.
 
 import { precacheAndRoute, createHandlerBoundToURL } from 'workbox-precaching';
+import { clientsClaim } from 'workbox-core';
 import { registerRoute, NavigationRoute } from 'workbox-routing';
 import { CacheFirst } from 'workbox-strategies';
 import { ExpirationPlugin } from 'workbox-expiration';
@@ -21,6 +22,11 @@ import { createPartialResponse } from 'workbox-range-requests';
 export const BASEMAP_CACHE = 'mo-basemap-tiles';
 const GLYPHS_CACHE = 'mo-basemap-glyphs';
 const ONE_YEAR = 60 * 60 * 24 * 365;
+
+// Take over immediately on update (registerType: 'autoUpdate') — otherwise a
+// stale worker keeps controlling open tabs until every one closes.
+self.skipWaiting();
+clientsClaim();
 
 precacheAndRoute(self.__WB_MANIFEST);
 

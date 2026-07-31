@@ -1,5 +1,11 @@
 import * as maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
+// MapLibre v6 splits its web worker into a separate module and resolves it
+// relative to import.meta.url, which breaks under bundlers (the file is
+// never emitted and the request 404s/hangs). Import it explicitly so Vite
+// emits it as an asset with the correct base path, and point MapLibre at it.
+import maplibreWorkerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url';
+maplibregl.setWorkerUrl(maplibreWorkerUrl);
 import { Protocol } from 'pmtiles';
 import { initFilters } from './filters.js';
 import { loadSiteData, checkForDataUpdate, showUpdateBanner } from './data.js';

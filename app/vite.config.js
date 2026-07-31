@@ -36,7 +36,7 @@ export default defineConfig({
       // opt in to the ~283MB offline download (see src/sw.js and
       // src/offline.js).
       injectManifest: {
-        globPatterns: ['**/*.{js,css,html,png,ico,svg,geojson}'],
+        globPatterns: ['**/*.{js,mjs,css,html,png,ico,svg,geojson}'],
       },
     }),
   ],
