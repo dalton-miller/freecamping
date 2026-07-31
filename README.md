@@ -1,6 +1,6 @@
 # MO Dispersed Camping
 
-**Live app:** https://&lt;owner&gt;.github.io/mo-dispersed-camping/ (replace `&lt;owner&gt;` with the GitHub user/org once deployed — see [app/README.md](app/README.md#deployment-github-pages))
+**Live app:** https://dalton-miller.github.io/freecamping/ (see [app/README.md](app/README.md#deployment-github-pages))
 
 An open-source dataset of free dispersed camping locations on public land in Missouri — primarily Mark Twain National Forest and Missouri Department of Conservation (MDC) conservation areas — plus an installable, offline-capable map app for browsing it. The dataset lives in [`data/`](data/) as canonical GeoJSON (with a GPX export for GPS apps), and the offline PWA lives in [`app/`](app/). Contributions of new or corrected sites are welcome; see [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md).
 

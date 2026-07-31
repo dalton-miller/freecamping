@@ -10,7 +10,7 @@ export default defineConfig({
   // GitHub Pages hosts the site under /<repo-name>/ rather than the domain
   // root, so all built asset URLs need this prefix. VITE_BASE_PATH allows an
   // override (e.g. for local testing or a custom domain, set it to '/').
-  base: process.env.VITE_BASE_PATH || '/mo-dispersed-camping/',
+  base: process.env.VITE_BASE_PATH || '/freecamping/',
   plugins: [
     VitePWA({
       registerType: 'autoUpdate',

@@ -19,10 +19,12 @@
 5. Trigger/verify deploy.
 6. Run the live-URL verification checklist, including a real-browser DevTools-offline test (offline mode has only been verified structurally — SW contents + range-request smoke tests).
 
-## Known issues to fix (next session candidates)
+## Known issues — RESOLVED (this session)
 
-1. **Stale USFS source links** — the 5 `fs.usda.gov/recarea/mtnf/recarea/?recid=...` URLs in `data/sites.geojson` (features 0–4: Noblett Lake, North Fork, Sutton Bluff, Bell Mountain, Paddy Creek) now redirect to a generic MTNF recreation landing page after a Forest Service site migration. Update to current URLs; MDC and ozarktrail.org links verified fine.
-2. **`last_verified` semantics** — plan-internal contradiction: schema requires `last_verified`, but plan says omit when unverified. All 10 entries currently carry the generation date (`2026-07-30`), including two Ozark Trail corridor entries whose sources say "unverified exact spot". Decide: relax schema to optional, or reword docs to treat it as "date entry last reviewed" and keep it. Mitigated today by honest `notes`/`source` wording.
+1. **Stale USFS source links** — FIXED: all 5 `fs.usda.gov/recarea/mtnf/recarea/?recid=...` URLs in `data/sites.geojson` replaced with current `fs.usda.gov/r09/marktwain/recreation/...` pages (Noblett Lake, North Fork, Sutton Bluff, Bell Mountain, Paddy Creek).
+2. **`last_verified` semantics** — RESOLVED by rewording: field stays required and means "date entry last reviewed against its source", not confirmed accuracy. Updated `data/schema.json`, `docs/DATA_SCHEMA.md`, `docs/CONTRIBUTING.md`, and the build plan. Location uncertainty continues to live in `notes`/`source`.
+
+Post-fix verification: `validate_data.py --strict` → 10 valid, 0 errors (photo warnings only); `geojson_to_gpx.py` → 10 waypoints; `npm test` → 7/7; `npm run build` → OK. Note: this machine needed `get-pip.py --user` + `pip install --break-system-packages -r scripts/requirements.txt` to get jsonschema, and `npm install` in `app/` before build (vite was missing).
 3. **Local build artifact caveat** — `npm run build` with the pmtiles file present locally copies 283MB into `dist/`. Harmless in CI (file is gitignored), but don't manually upload a locally built `dist/`.
 
 ## How to resume

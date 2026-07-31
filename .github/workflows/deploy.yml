@@ -26,10 +26,9 @@ jobs:
     runs-on: ubuntu-latest
     env:
       # The Missouri PMTiles basemap is hosted as a GitHub Release asset, not
-      # committed to the repo. TODO: replace <owner> with the GitHub user/org
-      # and confirm the release tag before the first deploy. See
-      # docs/OFFLINE_TILES.md for how to create the release asset.
-      VITE_PMTILES_URL: https://github.com/<owner>/mo-dispersed-camping/releases/download/tiles-v1/missouri.pmtiles
+      # committed to the repo. See docs/OFFLINE_TILES.md for how to create
+      # the release asset.
+      VITE_PMTILES_URL: https://github.com/dalton-miller/freecamping/releases/download/tiles-v1/missouri.pmtiles
     steps:
       - uses: actions/checkout@v4
 

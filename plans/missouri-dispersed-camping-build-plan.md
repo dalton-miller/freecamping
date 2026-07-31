@@ -67,7 +67,7 @@ Output the full file tree and contents of each file.
 
 **Acceptance criteria:**
 - `data/schema.json` is a valid JSON Schema (draft-07 or later) describing the `properties` object for a site Feature.
-- Required fields: `id` (string, stable unique slug), `name` (string), `land_manager` (enum: `"Mark Twain National Forest"`, `"Missouri Department of Conservation"`, `"Other"`), `access` (enum: `"paved"`, `"gravel"`, `"high_clearance_recommended"`, `"4wd_recommended"`), `last_verified` (date string, ISO 8601).
+- Required fields: `id` (string, stable unique slug), `name` (string), `land_manager` (enum: `"Mark Twain National Forest"`, `"Missouri Department of Conservation"`, `"Other"`), `access` (enum: `"paved"`, `"gravel"`, `"high_clearance_recommended"`, `"4wd_recommended"`), `last_verified` (date string, ISO 8601 — date the entry was last reviewed against its source, not a guarantee of on-the-ground accuracy; uncertainty belongs in `notes`/`source`).
 - Optional fields: `description` (string), `fire_restrictions` (string), `amenities` (array of enum strings, e.g. `"vault_toilet"`, `"fire_ring"`, `"water_nearby"`), `cell_signal` (enum: `"none"`, `"weak"`, `"good"`), `rig_size_limit_ft` (number or null), `photos` (array of relative or absolute URL strings), `source` (string — where this entry came from, e.g. forum thread URL, personal visit), `notes` (string).
 - `docs/DATA_SCHEMA.md` documents every field in a table (name, type, required?, description, example value) generated from/matching the schema.
 - A sample Feature validating against the schema is included in the doc as an example.
@@ -83,7 +83,7 @@ Required fields:
 - name: string
 - land_manager: enum ["Mark Twain National Forest", "Missouri Department of Conservation", "Other"]
 - access: enum ["paved", "gravel", "high_clearance_recommended", "4wd_recommended"]
-- last_verified: string, ISO 8601 date
+- last_verified: string, ISO 8601 date the entry was last reviewed against its source
 
 Optional fields:
 - description: string
@@ -147,7 +147,7 @@ how to run: pip install -r scripts/requirements.txt && python scripts/validate_d
 **Acceptance criteria:**
 - At least 8-10 Feature entries in `data/sites.geojson`, covering a mix of Mark Twain National Forest dispersed sites and at least one MDC conservation area, with realistic (approximate, publicly-known) coordinates.
 - Every entry passes `validate_data.py --strict` with zero errors (warnings for missing photos are acceptable at this stage since no photos exist yet).
-- Each entry has a real, honest `source` field (e.g. link to the Forest Service recreation page, or "overlandbound.com forum thread, unverified" where accuracy isn't confirmed) — no entry should claim `last_verified` unless you can actually stand behind the location.
+- Each entry has a real, honest `source` field (e.g. link to the Forest Service recreation page, or "overlandbound.com forum thread, unverified" where accuracy isn't confirmed). `last_verified` means "date this entry was last reviewed against its source" — always set it, but flag any location uncertainty honestly in `notes`/`source`.
 - Include a couple of `notes` fields flagging genuine uncertainty (e.g. "Exact pull-off location approximate — confirm on-site with MVUM map before relying on this.").
 
 **Prompt for Qwen:**
@@ -168,8 +168,8 @@ For each entry:
   approximate — note this honestly in "notes" where precision is uncertain)
 - Fill "source" honestly — link to the Forest Service page, MDC page, or note 
   "community-reported, unverified" if it's from a forum discussion
-- Do NOT set "last_verified" to a real date unless the entry represents confirmed, 
-  known-accurate information — otherwise omit the field
+- Always set "last_verified" to the date you reviewed the entry (it records review, 
+  not confirmation); record any uncertainty about exact location in "notes"
 - Leave "photos" as an empty array for now
 
 After writing the file, run (or simulate running) /scripts/validate_data.py --strict 

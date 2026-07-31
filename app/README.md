@@ -103,7 +103,7 @@ publishes `dist/` with the official `actions/deploy-pages` action.
 
 Key configuration:
 
-- **Vite `base`** is set to `/mo-dispersed-camping/` in `vite.config.js` so
+- **Vite `base`** is set to `/freecamping/` in `vite.config.js` so
   asset URLs resolve under the Pages subpath. Override with the
   `VITE_BASE_PATH` env var if hosting at a domain root instead.
 - **`VITE_PMTILES_URL`** is set in the workflow to the externally hosted
@@ -115,7 +115,7 @@ Key configuration:
 
 The workflow is ready but deployment itself requires pushing to GitHub:
 
-1. Push this repo to GitHub as `mo-dispersed-camping`.
+1. Push this repo to GitHub as `freecamping`.
 2. Upload `public/tiles/missouri.pmtiles` as a Release asset (tag
    `tiles-v1`) per [`../docs/OFFLINE_TILES.md`](../docs/OFFLINE_TILES.md).
 3. Edit `deploy.yml`: replace `<owner>` in `VITE_PMTILES_URL` with the
@@ -130,7 +130,7 @@ The workflow is ready but deployment itself requires pushing to GitHub:
 After the first successful deploy, verify against the **live URL** (not
 localhost):
 
-1. Visit `https://<owner>.github.io/mo-dispersed-camping/` in a fresh
+1. Visit `https://dalton-miller.github.io/freecamping/` in a fresh
    browser profile. Confirm the map renders with the vector basemap, site
    markers appear, and clicking a marker shows the popup.
 2. Exercise the sidebar: search by name, toggle land-manager / access /
