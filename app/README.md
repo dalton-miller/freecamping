@@ -93,6 +93,57 @@ The one manual constant is the app-managed cache name `mo-camping-data-v1` in
 `src/data.js`; it only needs bumping if the cache *format* ever changes
 (unlikely — it stores the raw GeoJSON body).
 
+## Deployment (GitHub Pages)
+
+The app deploys to GitHub Pages via
+[`../.github/workflows/deploy.yml`](../.github/workflows/deploy.yml), which
+runs on every push to `main` (and can be triggered manually from the Actions
+tab). The workflow runs `npm ci && npm run build` in this directory and
+publishes `dist/` with the official `actions/deploy-pages` action.
+
+Key configuration:
+
+- **Vite `base`** is set to `/mo-dispersed-camping/` in `vite.config.js` so
+  asset URLs resolve under the Pages subpath. Override with the
+  `VITE_BASE_PATH` env var if hosting at a domain root instead.
+- **`VITE_PMTILES_URL`** is set in the workflow to the externally hosted
+  `missouri.pmtiles` Release-asset URL — the ~283MB archive is not in the
+  repo, so a deployed build must point at the hosted copy (see
+  [`../docs/OFFLINE_TILES.md`](../docs/OFFLINE_TILES.md)).
+
+### Remaining manual steps to go live
+
+The workflow is ready but deployment itself requires pushing to GitHub:
+
+1. Push this repo to GitHub as `mo-dispersed-camping`.
+2. Upload `public/tiles/missouri.pmtiles` as a Release asset (tag
+   `tiles-v1`) per [`../docs/OFFLINE_TILES.md`](../docs/OFFLINE_TILES.md).
+3. Edit `deploy.yml`: replace `<owner>` in `VITE_PMTILES_URL` with the
+   GitHub user/org.
+4. In repo Settings → Pages, set Source to **GitHub Actions**.
+5. Push to `main` (or run the workflow manually) to deploy.
+6. Replace `<owner>` in the live-URL link at the top of the root
+   [`../README.md`](../README.md) with the real URL.
+
+### Verifying the deployed app
+
+After the first successful deploy, verify against the **live URL** (not
+localhost):
+
+1. Visit `https://<owner>.github.io/mo-dispersed-camping/` in a fresh
+   browser profile. Confirm the map renders with the vector basemap, site
+   markers appear, and clicking a marker shows the popup.
+2. Exercise the sidebar: search by name, toggle land-manager / access /
+   amenity checkboxes, and hit Reset — markers should update live.
+3. Wait for the "Ready for offline use" toast (the basemap archive caches
+   on first use, so pan/zoom around Missouri once).
+4. Test offline mode: in Chrome DevTools → Network, set throttling to
+   **Offline**, then reload the page. The map, base tiles, markers, popups,
+   and filters should all still work with no successful network requests
+   beyond the service worker cache.
+5. Confirm the app is installable (browser "Install app" prompt / Add to
+   Home Screen on mobile) and launches standalone.
+
 ## Syncing data
 
 The app reads its site data from `public/data/sites.geojson`. That file is a

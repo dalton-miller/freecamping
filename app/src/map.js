@@ -184,7 +184,15 @@ export async function initMap() {
     initFilters(siteData, (filtered) => {
       map.getSource('sites').setData(filtered);
     });
+
+    hideLoading();
   });
+}
+
+// Dismiss the full-screen loading overlay once the map style and site data
+// have finished loading (called from the map 'load' handler).
+function hideLoading() {
+  document.getElementById('loading')?.classList.add('hidden');
 }
 
 function fitToData(map, data) {

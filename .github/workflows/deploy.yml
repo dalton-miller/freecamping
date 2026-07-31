@@ -1,0 +1,65 @@
+# Build /app and deploy /app/dist to GitHub Pages on every push to main
+# (or manually via the Actions tab).
+#
+# One-time setup required in the GitHub repo before this works:
+#   1. Settings → Pages → Source: "GitHub Actions".
+#   2. Upload the offline basemap as a Release asset (it's ~283MB, far over
+#      the 100MB git file limit — see docs/OFFLINE_TILES.md) and set
+#      VITE_PMTILES_URL below to that asset's download URL.
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      # The Missouri PMTiles basemap is hosted as a GitHub Release asset, not
+      # committed to the repo. TODO: replace <owner> with the GitHub user/org
+      # and confirm the release tag before the first deploy. See
+      # docs/OFFLINE_TILES.md for how to create the release asset.
+      VITE_PMTILES_URL: https://github.com/<owner>/mo-dispersed-camping/releases/download/tiles-v1/missouri.pmtiles
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+
+      - name: Install dependencies
+        working-directory: app
+        run: npm ci
+
+      - name: Build app
+        working-directory: app
+        run: npm run build
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: app/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

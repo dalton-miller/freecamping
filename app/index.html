@@ -7,6 +7,10 @@
   </head>
   <body>
     <div id="app">
+      <header id="app-header">
+        <h1>MO Dispersed Camping</h1>
+        <span class="header-tagline">Free camping on Missouri public land</span>
+      </header>
       <button id="sidebar-toggle" aria-label="Toggle filters" aria-expanded="true">☰ Filters</button>
       <aside id="sidebar">
         <h2>Filter Sites</h2>
@@ -29,6 +33,10 @@
         <button id="reset-filters" type="button">Reset filters</button>
       </aside>
       <div id="map"></div>
+      <div id="loading" role="status" aria-live="polite">
+        <div class="spinner" aria-hidden="true"></div>
+        <p>Loading map&hellip;</p>
+      </div>
     </div>
     <script type="module" src="/src/main.js"></script>
   </body>
