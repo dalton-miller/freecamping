@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='utf-8'?>
+<gpx version="1.1" creator="mo-dispersed-camping" xmlns="http://www.topografix.com/GPX/1/1">
+  <wpt lat="36.945800" lon="-92.039700">
+    <name>Noblett Lake Dispersed Sites</name>
+    <desc>Mark Twain National Forest | Access: paved | Amenities: vault_toilet, fire_ring, water_nearby | Fire: Fires in established rings only. | Cell: weak</desc>
+  </wpt>
+  <wpt lat="36.776700" lon="-92.216500">
+    <name>North Fork Recreation Area Dispersed Camping</name>
+    <desc>Mark Twain National Forest | Access: gravel | Amenities: fire_ring, water_nearby | Cell: weak</desc>
+  </wpt>
+  <wpt lat="37.192000" lon="-91.058000">
+    <name>Sutton Bluff Dispersed Camping</name>
+    <desc>Mark Twain National Forest | Access: gravel | Amenities: fire_ring, water_nearby | Cell: none</desc>
+  </wpt>
+  <wpt lat="37.634000" lon="-90.843000">
+    <name>Bell Mountain Wilderness (Backcountry)</name>
+    <desc>Mark Twain National Forest | Access: gravel | Amenities: fire_ring | Fire: Fires in existing rings only; pack out all trash. | Cell: weak</desc>
+  </wpt>
+  <wpt lat="37.526000" lon="-92.118000">
+    <name>Paddy Creek Wilderness (Backcountry)</name>
+    <desc>Mark Twain National Forest | Access: gravel | Amenities: fire_ring, water_nearby, vault_toilet | Cell: none</desc>
+  </wpt>
+  <wpt lat="37.300000" lon="-91.300000">
+    <name>Ozark Trail — Blair Creek Section (Trailhead-Adjacent Dispersed)</name>
+    <desc>Mark Twain National Forest | Access: gravel | Amenities: water_nearby | Cell: none</desc>
+  </wpt>
+  <wpt lat="36.567000" lon="-91.164000">
+    <name>Ozark Trail — Eleven Point Section (Trailhead-Adjacent Dispersed)</name>
+    <desc>Mark Twain National Forest | Access: high_clearance_recommended | Amenities: water_nearby | Cell: none</desc>
+  </wpt>
+  <wpt lat="37.887000" lon="-91.197000">
+    <name>Huzzah Conservation Area Primitive Camping</name>
+    <desc>Missouri Department of Conservation | Access: gravel | Amenities: fire_ring, water_nearby | Cell: weak</desc>
+  </wpt>
+  <wpt lat="37.545000" lon="-91.476000">
+    <name>Indian Trail Conservation Area Primitive Camping</name>
+    <desc>Missouri Department of Conservation | Access: gravel | Amenities: fire_ring | Cell: none</desc>
+  </wpt>
+  <wpt lat="40.202000" lon="-91.726000">
+    <name>Deer Ridge Conservation Area Primitive Camping</name>
+    <desc>Missouri Department of Conservation | Access: gravel | Amenities: fire_ring, water_nearby | Cell: good</desc>
+  </wpt>
+</gpx>

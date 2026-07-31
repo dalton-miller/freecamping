@@ -11,6 +11,28 @@ An open-source dataset of free dispersed camping locations on public land in Mis
 /docs/     CONTRIBUTING.md, DATA_SCHEMA.md
 ```
 
+## Validating data
+
+All dataset entries are validated against `data/schema.json` before merging:
+
+```
+pip install -r scripts/requirements.txt
+python scripts/validate_data.py
+```
+
+Add `--strict` to also warn about missing recommended fields (photos, description). The script checks schema conformance, Point geometry, a loose Missouri bounding box, and unique site ids.
+
+## Getting the data
+
+- **`data/sites.geojson`** is the canonical, richest source. Use this if you're building on the dataset directly or your tool supports GeoJSON.
+- **`data/sites.gpx`** is a portable export for GPS apps like OsmAnd, Gaia GPS, and Garmin devices.
+
+After editing the GeoJSON, regenerate the GPX with:
+
+```
+python scripts/geojson_to_gpx.py
+```
+
 ## License
 
 Two licenses apply to different parts of this repository:

@@ -1,7 +1,78 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "MO Dispersed Camping Site Properties (placeholder)",
-  "description": "Placeholder schema. Will define the GeoJSON Feature 'properties' object for dispersed camping sites in a later phase.",
+  "title": "MO Dispersed Camping Site Properties",
+  "description": "Schema for the 'properties' object of a GeoJSON Feature representing one dispersed camping site on Missouri public land.",
   "type": "object",
-  "properties": {}
+  "required": ["id", "name", "land_manager", "access", "last_verified"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Stable unique slug for the site (lowercase, hyphenated).",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "examples": ["noblett-lake-below-dam"]
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable site name.",
+      "minLength": 1,
+      "examples": ["Noblett Lake Dispersed Site"]
+    },
+    "land_manager": {
+      "type": "string",
+      "description": "Agency that manages the land.",
+      "enum": ["Mark Twain National Forest", "Missouri Department of Conservation", "Other"]
+    },
+    "access": {
+      "type": "string",
+      "description": "Road/vehicle access character for reaching the site.",
+      "enum": ["paved", "gravel", "high_clearance_recommended", "4wd_recommended"]
+    },
+    "last_verified": {
+      "type": "string",
+      "description": "ISO 8601 date the entry was last confirmed accurate.",
+      "format": "date",
+      "examples": ["2024-06-15"]
+    },
+    "description": {
+      "type": "string",
+      "description": "Free-text description of the site."
+    },
+    "fire_restrictions": {
+      "type": "string",
+      "description": "Fire rules for the site (e.g. established rings only, seasonal bans)."
+    },
+    "amenities": {
+      "type": "array",
+      "description": "Amenities present at the site.",
+      "items": {
+        "type": "string",
+        "enum": ["vault_toilet", "fire_ring", "water_nearby", "trash_service", "picnic_table"]
+      },
+      "uniqueItems": true
+    },
+    "cell_signal": {
+      "type": "string",
+      "description": "Typical cell signal at the site.",
+      "enum": ["none", "weak", "good"]
+    },
+    "rig_size_limit_ft": {
+      "type": ["number", "null"],
+      "description": "Maximum recommended rig length in feet, or null if no practical limit / unknown.",
+      "exclusiveMinimum": 0
+    },
+    "photos": {
+      "type": "array",
+      "description": "Photo references: relative paths under data/photos/ or absolute URLs.",
+      "items": { "type": "string" }
+    },
+    "source": {
+      "type": "string",
+      "description": "Where this entry came from (agency page URL, forum thread, personal visit, etc.)."
+    },
+    "notes": {
+      "type": "string",
+      "description": "Caveats, uncertainty flags, or other honest context about the entry."
+    }
+  }
 }
