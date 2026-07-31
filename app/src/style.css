@@ -1,0 +1,154 @@
+html,
+body,
+#app {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+#map {
+  position: absolute;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+}
+
+/* Sidebar */
+#sidebar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 280px;
+  box-sizing: border-box;
+  padding: 16px;
+  background: #ffffff;
+  border-right: 1px solid #d7d7d7;
+  box-shadow: 2px 0 6px rgba(0, 0, 0, 0.08);
+  overflow-y: auto;
+  z-index: 10;
+  transition: transform 0.2s ease-in-out;
+}
+
+#sidebar.collapsed {
+  transform: translateX(-100%);
+}
+
+#sidebar h2 {
+  margin: 0 0 12px;
+  font-size: 1.1rem;
+}
+
+.filter-section {
+  margin-bottom: 16px;
+}
+
+.filter-section h3 {
+  margin: 0 0 6px;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #555;
+  border-bottom: 1px solid #e2e2e2;
+  padding-bottom: 4px;
+}
+
+.filter-section label[for='search-input'] {
+  display: block;
+  font-size: 0.85rem;
+  color: #555;
+  margin-bottom: 4px;
+}
+
+#search-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 6px 8px;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 2px 0;
+}
+
+.empty-note {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #888;
+  font-style: italic;
+}
+
+#reset-filters {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #2e7d32;
+  border-radius: 4px;
+  background: #2e7d32;
+  color: #fff;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+#reset-filters:hover {
+  background: #256528;
+}
+
+/* Toggle button — only shown on narrow viewports */
+#sidebar-toggle {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 20;
+  padding: 8px 12px;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  background: #ffffff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+#sidebar-toggle.hidden {
+  display: none;
+}
+
+@media (max-width: 600px) {
+  #sidebar {
+    width: 240px;
+  }
+}
+
+/* Popups */
+.maplibregl-popup-content {
+  padding: 12px 14px;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.maplibregl-popup-content .popup-title {
+  display: block;
+  font-size: 1rem;
+  margin-bottom: 4px;
+}
+
+.maplibregl-popup-content img {
+  display: block;
+  margin-top: 8px;
+  border-radius: 4px;
+}

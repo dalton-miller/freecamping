@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MO Dispersed Camping</title>
+  </head>
+  <body>
+    <div id="app">
+      <button id="sidebar-toggle" aria-label="Toggle filters" aria-expanded="true">☰ Filters</button>
+      <aside id="sidebar">
+        <h2>Filter Sites</h2>
+        <div class="filter-section">
+          <label for="search-input">Search by name</label>
+          <input type="search" id="search-input" placeholder="e.g. Noblett" autocomplete="off" />
+        </div>
+        <div class="filter-section" id="filter-land-manager">
+          <h3>Land manager</h3>
+          <div class="checkbox-group"></div>
+        </div>
+        <div class="filter-section" id="filter-access">
+          <h3>Access</h3>
+          <div class="checkbox-group"></div>
+        </div>
+        <div class="filter-section" id="filter-amenities">
+          <h3>Amenities</h3>
+          <div class="checkbox-group"></div>
+        </div>
+        <button id="reset-filters" type="button">Reset filters</button>
+      </aside>
+      <div id="map"></div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

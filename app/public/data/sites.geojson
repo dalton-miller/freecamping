@@ -1,0 +1,183 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-92.0397, 36.9458] },
+      "properties": {
+        "id": "noblett-lake-below-dam",
+        "name": "Noblett Lake Dispersed Sites",
+        "land_manager": "Mark Twain National Forest",
+        "access": "paved",
+        "last_verified": "2026-07-30",
+        "description": "Dispersed camping in the Noblett Lake area below the dam, adjacent to the developed Noblett Lake Recreation Area campground on the Willow Springs Ranger District.",
+        "fire_restrictions": "Fires in established rings only.",
+        "amenities": ["vault_toilet", "fire_ring", "water_nearby"],
+        "cell_signal": "weak",
+        "rig_size_limit_ft": 25,
+        "photos": [],
+        "source": "https://www.fs.usda.gov/recarea/mtnf/recarea/?recid=21786 (Noblett Lake Recreation Area, USDA Forest Service)",
+        "notes": "Coordinates are for the general Noblett Lake area; exact pull-off locations approximate — confirm on-site with the Motor Vehicle Use Map (MVUM) before relying on a specific spot."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-92.2165, 36.7767] },
+      "properties": {
+        "id": "north-fork-recreation-area-dispersed",
+        "name": "North Fork Recreation Area Dispersed Camping",
+        "land_manager": "Mark Twain National Forest",
+        "access": "gravel",
+        "last_verified": "2026-07-30",
+        "description": "Dispersed camping along gravel forest roads near the North Fork Recreation Area and the North Fork of the White River, Ava/Cassville/Willow Springs Ranger District area.",
+        "amenities": ["fire_ring", "water_nearby"],
+        "cell_signal": "weak",
+        "photos": [],
+        "source": "https://www.fs.usda.gov/recarea/mtnf/recarea/?recid=21799 (North Fork Recreation Area, USDA Forest Service)",
+        "notes": "Point marks the general recreation-area vicinity, not a specific campsite. Forest road conditions vary after rain — check MVUM for roads open to camping."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-91.0580, 37.1920] },
+      "properties": {
+        "id": "sutton-bluff-dispersed",
+        "name": "Sutton Bluff Dispersed Camping",
+        "land_manager": "Mark Twain National Forest",
+        "access": "gravel",
+        "last_verified": "2026-07-30",
+        "description": "Dispersed camping along the West Fork of the Black River near the Sutton Bluff Recreation Area and trailhead, Salem Ranger District. Popular with ATVs; expect company on summer weekends.",
+        "amenities": ["fire_ring", "water_nearby"],
+        "cell_signal": "none",
+        "rig_size_limit_ft": null,
+        "photos": [],
+        "source": "https://www.fs.usda.gov/recarea/mtnf/recarea/?recid=21910 (Sutton Bluff Recreation Area, USDA Forest Service)",
+        "notes": "Gravel river-bar sites; flash flooding possible on the West Fork Black River — avoid camping on low gravel bars when rain is forecast upstream."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-90.8430, 37.6340] },
+      "properties": {
+        "id": "bell-mountain-wilderness",
+        "name": "Bell Mountain Wilderness (Backcountry)",
+        "land_manager": "Mark Twain National Forest",
+        "access": "gravel",
+        "last_verified": "2026-07-30",
+        "description": "Backcountry dispersed camping in Bell Mountain Wilderness. Hike-in only — no vehicle camping. Popular ridge-line sites near the Bell Mountain summit along the Ozark Trail's Bell Mountain section.",
+        "fire_restrictions": "Fires in existing rings only; pack out all trash.",
+        "amenities": ["fire_ring"],
+        "cell_signal": "weak",
+        "rig_size_limit_ft": null,
+        "photos": [],
+        "source": "https://www.fs.usda.gov/recarea/mtnf/recarea/?recid=21752 (Bell Mountain Wilderness, USDA Forest Service)",
+        "notes": "Summit-area sites are heavily used and showing impact — consider less-used sites lower on the trail. Point marks the Hwy A trailhead vicinity."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-92.1180, 37.5260] },
+      "properties": {
+        "id": "paddy-creek-wilderness",
+        "name": "Paddy Creek Wilderness (Backcountry)",
+        "land_manager": "Mark Twain National Forest",
+        "access": "gravel",
+        "last_verified": "2026-07-30",
+        "description": "Backcountry dispersed camping in Paddy Creek Wilderness, accessible from the Paddy Creek Recreation Area trailhead on the Houston/Rolla/Cuba Ranger District. Hike-in only within the wilderness boundary.",
+        "amenities": ["fire_ring", "water_nearby", "vault_toilet"],
+        "cell_signal": "none",
+        "rig_size_limit_ft": null,
+        "photos": [],
+        "source": "https://www.fs.usda.gov/recarea/mtnf/recarea/?recid=21832 (Paddy Creek Recreation Area / Wilderness, USDA Forest Service)",
+        "notes": "Vault toilet is at the recreation-area trailhead, not in the backcountry. Treat all creek water before drinking."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-91.3000, 37.3000] },
+      "properties": {
+        "id": "ozark-trail-blair-creek-section",
+        "name": "Ozark Trail — Blair Creek Section (Trailhead-Adjacent Dispersed)",
+        "land_manager": "Mark Twain National Forest",
+        "access": "gravel",
+        "last_verified": "2026-07-30",
+        "description": "Trailhead-adjacent dispersed camping area along the Ozark Trail's Blair Creek section in Shannon County. Dispersed camping is generally allowed on National Forest land at least 100 feet from the trail and from water sources.",
+        "amenities": ["water_nearby"],
+        "cell_signal": "none",
+        "rig_size_limit_ft": null,
+        "photos": [],
+        "source": "https://ozarktrail.org/ (Ozark Trail Association, Blair Creek section) — general area, unverified exact spot",
+        "notes": "This point intentionally represents a general corridor area near a trailhead, NOT an exact campsite. Camp 100+ feet from trail and water per Forest Service dispersed camping rules. Confirm current conditions with the Potosi/Fredericktown Ranger District."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-91.1640, 36.5670] },
+      "properties": {
+        "id": "ozark-trail-eleven-point-section",
+        "name": "Ozark Trail — Eleven Point Section (Trailhead-Adjacent Dispersed)",
+        "land_manager": "Mark Twain National Forest",
+        "access": "high_clearance_recommended",
+        "last_verified": "2026-07-30",
+        "description": "Trailhead-adjacent dispersed camping area along the Ozark Trail's Eleven Point section in Oregon County, within the Eleven Point Ranger District. Dispersed camping generally allowed 100+ feet from trail and water.",
+        "amenities": ["water_nearby"],
+        "cell_signal": "none",
+        "rig_size_limit_ft": null,
+        "photos": [],
+        "source": "https://ozarktrail.org/ (Ozark Trail Association, Eleven Point section) — general area, unverified exact spot",
+        "notes": "General corridor area, not a pinpointed site. Some access roads are rough and rutted — high clearance recommended, avoid after heavy rain. Camp 100+ feet from the Eleven Point River and the trail."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-91.1970, 37.8870] },
+      "properties": {
+        "id": "huzzah-conservation-area",
+        "name": "Huzzah Conservation Area Primitive Camping",
+        "land_manager": "Missouri Department of Conservation",
+        "access": "gravel",
+        "last_verified": "2026-07-30",
+        "description": "Primitive camping allowed on Huzzah Conservation Area along Huzzah Creek in Crawford County. Designated primitive camping areas near the creek; popular with floaters in summer.",
+        "amenities": ["fire_ring", "water_nearby"],
+        "cell_signal": "weak",
+        "photos": [],
+        "source": "https://mdc.mo.gov/discover-nature/places/huzzah-conservation-area (Missouri Department of Conservation)",
+        "notes": "Camp only in designated/posted primitive camping areas per MDC area regulations. Creek gravel bars flood — check the Huzzah Creek gauge before camping low. Point is approximate for the main camping reach."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-91.4760, 37.5450] },
+      "properties": {
+        "id": "indian-trail-conservation-area",
+        "name": "Indian Trail Conservation Area Primitive Camping",
+        "land_manager": "Missouri Department of Conservation",
+        "access": "gravel",
+        "last_verified": "2026-07-30",
+        "description": "Primitive camping on Indian Trail Conservation Area in Dent County, a large forested Ozark area with glades and springs. Camping permitted at designated primitive sites per MDC area regulations.",
+        "amenities": ["fire_ring"],
+        "cell_signal": "none",
+        "photos": [],
+        "source": "https://mdc.mo.gov/discover-nature/places/indian-trail-conservation-area (Missouri Department of Conservation)",
+        "notes": "Large area with limited signage — pick up the MDC area map and confirm designated camping spots. Exact site coordinates approximate; community-reported details welcome via PR."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-91.7260, 40.2020] },
+      "properties": {
+        "id": "deer-ridge-conservation-area",
+        "name": "Deer Ridge Conservation Area Primitive Camping",
+        "land_manager": "Missouri Department of Conservation",
+        "access": "gravel",
+        "last_verified": "2026-07-30",
+        "description": "Primitive camping on Deer Ridge Conservation Area in Lewis County, northeast Missouri — forest and savanna along the Wyaconda River. One of the few public primitive-camping options in northern Missouri.",
+        "amenities": ["fire_ring", "water_nearby"],
+        "cell_signal": "good",
+        "photos": [],
+        "source": "https://mdc.mo.gov/discover-nature/places/deer-ridge-conservation-area (Missouri Department of Conservation)",
+        "notes": "Verify current camping regulations on the MDC area page before visiting — rules on MDC areas change periodically. Point approximate for the main access area."
+      }
+    }
+  ]
+}
