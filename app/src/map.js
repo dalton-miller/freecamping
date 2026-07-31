@@ -257,6 +257,23 @@ export async function initMap() {
 
   map.addControl(new maplibregl.NavigationControl(), 'top-right');
 
+  // "Locate me" button: shows the user's position as a dot on the map and
+  // flies to it. Uses the browser Geolocation API; browsers require HTTPS
+  // (or localhost) and user permission. With trackUserLocation the control
+  // keeps the dot live as the user moves, which is what you want in the
+  // field. The accuracy circle is drawn by the control itself, so no extra
+  // sources/layers are needed (and it survives basemap style switches).
+  const geolocate = new maplibregl.GeolocateControl({
+    positionOptions: { enableHighAccuracy: true },
+    trackUserLocation: true,
+    showUserLocation: true,
+  });
+  map.addControl(geolocate, 'top-right');
+  geolocate.on('error', (e) => {
+    // Permission denied / position unavailable — surface it, don't fail silently.
+    console.warn(`Geolocation unavailable: ${e.message ?? e.code}`);
+  });
+
   // Capture the 'load' event as a promise BEFORE doing any async work — the
   // style (especially the tiny raster fallback) can finish loading while
   // we're still awaiting other work, and a listener registered after the
