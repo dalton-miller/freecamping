@@ -156,12 +156,22 @@ export async function initMap() {
 
   map.addControl(new maplibregl.NavigationControl(), 'top-right');
 
+  // Capture the 'load' event as a promise BEFORE doing any async work — the
+  // style (especially the tiny raster fallback) can finish loading while
+  // we're still awaiting the site data, and a listener registered after the
+  // event has fired never runs (no markers, stuck loading overlay).
+  const mapLoaded = new Promise((resolve) => {
+    if (map.loaded()) resolve();
+    else map.once('load', resolve);
+  });
+
   // Render immediately from the best cached copy (offline-first), then check
   // for a newer dataset in the background.
   const { data: siteData, text } = await loadSiteData(DATA_URL);
   checkForDataUpdate(DATA_URL, text, showUpdateBanner);
 
-  map.on('load', () => {
+  await mapLoaded;
+  {
     map.addSource('sites', {
       type: 'geojson',
       data: siteData,
@@ -186,7 +196,7 @@ export async function initMap() {
     });
 
     hideLoading();
-  });
+  }
 }
 
 // Dismiss the full-screen loading overlay once the map style and site data
